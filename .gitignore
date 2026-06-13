@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+*.cjs
+*.tsbuildinfo
+
+# TypeScript declarations (generated during build)
+**/*.d.ts
+**/*.d.ts.map
+
+# Generated code — regenerate via `pnpm --filter @workspace/api-spec run codegen`
+lib/api-client-react/src/generated/
+lib/api-zod/src/generated/
+
+# Environment variables — NEVER commit secrets
+.env
+.env.*
+!.env.example
+
+# Replit-specific (delete these files from your repo too)
+.replit
+.replitignore
+.agents/
+attached_assets/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

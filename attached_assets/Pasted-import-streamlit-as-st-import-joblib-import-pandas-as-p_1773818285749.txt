@@ -1,0 +1,84 @@
+import streamlit as st
+import joblib
+import pandas as pd
+import numpy as np
+
+# Load your model (upload sanjivini_risk_model.pkl)
+@st.cache_resource
+def load_model():
+    return joblib.load('sanjivini_risk_model.pkl')
+
+st.set_page_config(page_title="Sanjivini AI Demo", layout="wide")
+model = load_model()
+
+# === SANJIVINI HEADER ===
+col1, col2, col3 = st.columns([1, 2, 1])
+with col1:
+    st.write("👨‍👩‍👧‍👦")
+with col2:
+    st.markdown("# 🩺 **SANJIVINI AI**")
+    st.markdown("*Family Health Guardian - Team Healix AIIS206*")
+with col3:
+    st.write("🩺")
+
+# === TABS FOR ALL FEATURES ===
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Health Check", "💊 Daily Tips", "🚨 Family Alerts", "📈 Trends", "⚙️ Settings"])
+
+with tab1:  # HEALTH MONITORING + RISK DETECTION
+    st.header("Daily Health Check")
+    col1, col2 = st.columns(2)
+    with col1:
+        age = st.slider("👴 Age", 18, 90, 45)
+        bp = st.slider("🩸 BP Systolic", 90, 200, 130)
+        symptoms = st.slider("🤕 Symptoms (0=none, 4=severe)", 0, 5, 1)
+    with col2:
+        st.info("**Features Shown:**")
+        st.write("✅ Symptom tracking")
+        st.write("✅ BP monitoring") 
+        st.write("✅ ML Risk detection")
+    
+    if st.button("🔍 **ANALYZE RISK**", type="primary"):
+        risk = model.predict_proba([[age, bp, symptoms]])[0,1] * 100
+        if risk > 50:
+            st.error(f"🚨 **HIGH RISK: {risk:.0f}%**")
+            st.error("💌 Family alert sent!")
+        else:
+            st.success(f"✅ Low risk: {risk:.0f}%")
+            st.success("👴 Daily tip generated")
+
+with tab2:  # DAILY GUIDANCE
+    st.header("AI Health Companion")
+    tips = ["Drink 2L water", "Walk 30min daily", "Monitor BP weekly", "Ayurvedic tulsi tea"]
+    selected_tip = st.selectbox("Today's Elder Wisdom:", tips)
+    st.balloons()
+    st.success(f"🧓 **Digital Elder says:** {selected_tip}")
+
+with tab3:  # FAMILY ALERTS
+    st.header("Family Alert System")
+    st.warning("**Demo Mode - Shows alert workflow**")
+    if st.button("🚨 Send Test Alert"):
+        st.balloons()
+        st.success("✅ **Alert sent to family WhatsApp/SMS**")
+        st.info("📱 Contacts: Amma(9845xxxxx), Anna(9987xxxxx)")
+        st.code("SMS: 'Grandma BP high 155. Please check!'")
+
+with tab4:  # HEALTH TRENDS
+    st.header("Health Trends")
+    st.line_chart({"BP": [120, 135, 142, 155], "Risk%": [20, 35, 45, 70]})
+    st.caption("📈 30-day tracking • Hypertension trend detected")
+
+with tab5:  # SETTINGS
+    st.header("Family Settings")
+    st.subheader("👥 Family Members")
+    st.dataframe(pd.DataFrame({
+        "Name": ["Grandma Lakshmi", "Amma", "You"],
+        "Role": ["Elder", "Caregiver", "User"],
+        "Alerts": ["SMS", "WhatsApp", "App"]
+    }))
+    st.subheader("🌐 Regional Support")
+    language = st.selectbox("Voice Language", ["Kannada", "Hindi", "Telugu", "English"])
+    st.success(f"✅ Voice assistant set to {language}")
+
+# FOOTER
+st.markdown("---")
+st.markdown("*Demo for Innovate Bharat Hackathon 2026 • AIIS Track • Live ML Model*")
